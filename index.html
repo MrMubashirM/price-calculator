@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Product Price Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --secondary-color: #6c757d;
+            --light-bg: #f0f9f0;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.3rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .products-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .product-item:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .product-price {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 30px 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #dee2e6;
+        }
+        
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 500px) {
+            .calculator-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .result {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .result-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            color: #666;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .actions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification.success {
+            background-color: var(--primary-color);
+        }
+        
+        .notification.error {
+            background-color: #dc3545;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .custom-category-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .custom-category-input input {
+            flex: 1;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .stat-box {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Search bar for products */
+        .search-container {
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .search-box input {
+            padding-left: 45px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Custom Product Price Calculator</h1>
+            <p class="subtitle">Add any product, set daily prices, and calculate exact costs by weight</p>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-plus-circle"></i> Add Custom Product</h2>
+                
+                <div class="form-group">
+                    <label for="productName"><i class="fas fa-tag"></i> Product Name</label>
+                    <input type="text" id="productName" placeholder="e.g., Tomato, Apple, Rice, etc.">
+                </div>
+                
+                <div class="form-group">
+                    <label for="productCategory"><i class="fas fa-list"></i> Category (Optional)</label>
+                    <div class="custom-category-input">
+                        <select id="productCategory">
+                            <option value="">Select category</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Grains">Grains</option>
+                            <option value="Dairy">Dairy</option>
+                            <option value="Spices">Spices</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" id="customCategory" placeholder="Or enter custom category" style="display: none;">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productPrice"><i class="fas fa-rupee-sign"></i> Price per kg</label>
+                    <input type="number" id="productPrice" placeholder="Price in ₹ per kg" min="1" step="0.5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="productUnit"><i class="fas fa-weight"></i> Unit</label>
+                    <select id="productUnit">
+                        <option value="kg">Per Kilogram (kg)</option>
+                        <option value="100g">Per 100 grams</option>
+                        <option value="500g">Per 500 grams</option>
+                        <option value="liter">Per Liter</option>
+                        <option value="piece">Per Piece</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" id="addProductBtn">
+                    <i class="fas fa-save"></i> Add / Update Product
+                </button>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Total Products</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalCategories">0</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">₹<span id="avgPrice">0</span></div>
+                        <div class="stat-label">Avg Price</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Calculate Cost</h2>
+                
+                <div class="form-group">
+                    <label for="calcProductSelect"><i class="fas fa-shopping-basket"></i> Select Product</label>
+                    <select id="calcProductSelect">
+                        <option value="">-- Select a product --</option>
+                    </select>
+                </div>
+                
+                <div class="calculator-inputs">
+                    <div class="form-group">
+                        <label for="weightInput"><i class="fas fa-weight-hanging"></i> Weight/Quantity</label>
+                        <input type="number" id="weightInput" placeholder="Enter amount" min="0.1" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="weightUnit"><i class="fas fa-ruler"></i> Unit</label>
+                        <select id="weightUnit">
+                            <option value="g">Grams (g)</option>
+                            <option value="kg">Kilograms (kg)</option>
+                            <option value="piece">Piece</option>
+                            <option value="ml">Milliliters (ml)</option>
+                            <option value="liter">Liters</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="calculateBtn">
+                    <i class="fas fa-calculator"></i> Calculate Total Cost
+                </button>
+                
+                <div class="result" id="result">
+                    <div class="result-title">Total Cost</div>
+                    <div class="result-amount" id="totalAmount">₹0.00</div>
+                    <div class="result-details">
+                        <div id="calculationDetails">Calculation details will appear here</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h2 class="section-title"><i class="fas fa-boxes"></i> Your Products</h2>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchProduct" placeholder="Search products by name or category...">
+                </div>
+            </div>
+            
+            <div class="products-list" id="productsList">
+                <div class="empty-message">
+                    <i class="fas fa-box-open fa-2x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>No products added yet. Start by adding your first product above!</p>
+                </div>
+            </div>
+            
+            <div class="actions-container">
+                <button class="btn btn-secondary" id="resetAllBtn">
+                    <i class="fas fa-trash-alt"></i> Reset All Products
+                </button>
+                <button class="btn btn-secondary" id="sampleDataBtn">
+                    <i class="fas fa-magic"></i> Load Sample Data
+                </button>
+                <button class="btn btn-secondary" id="exportDataBtn">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="btn btn-secondary" id="importDataBtn">
+                    <i class="fas fa-file-import"></i> Import Data
+                </button>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>Custom Product Price Calculator</strong> &copy; 2023</p>
+            <p>All data is stored locally in your browser. Add any product with custom prices!</p>
+        </footer>
+    </div>
+    
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+    
+    <script>
+        // Product database
+        let products = JSON.parse(localStorage.getItem('productPriceCalculator')) || [];
+        
+        // DOM Elements
+        const productNameInput = document.getElementById('productName');
+        const productCategorySelect = document.getElementById('productCategory');
+        const customCategoryInput = document.getElementById('customCategory');
+        const productPriceInput = document.getElementById('productPrice');
+        const productUnitSelect = document.getElementById('productUnit');
+        const addProductBtn = document.getElementById('addProductBtn');
+        const calcProductSelect = document.getElementById('calcProductSelect');
+        const weightInput = document.getElementById('weightInput');
+        const weightUnitSelect = document.getElementById('weightUnit');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const result = document.getElementById('result');
+        const totalAmount = document.getElementById('totalAmount');
+        const calculationDetails = document.getElementById('calculationDetails');
+        const productsList = document.getElementById('productsList');
+        const searchProductInput = document.getElementById('searchProduct');
+        const resetAllBtn = document.getElementById('resetAllBtn');
+        const sampleDataBtn = document.getElementById('sampleDataBtn');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const importDataBtn = document.getElementById('importDataBtn');
+        const importFileInput = document.getElementById('importFileInput');
+        const totalProductsElement = document.getElementById('totalProducts');
+        const totalCategoriesElement = document.getElementById('totalCategories');
+        const avgPriceElement = document.getElementById('avgPrice');
+        
+        // Initialize the app
+        function initApp() {
+            updateProductsList();
+            updateStats();
+            
+            // Set today's date
+            const today = new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.querySelector('.subtitle').textContent += ` | Today: ${today}`;
+            
+            // Show welcome notification
+            if (products.length === 0) {
+                showNotification('Welcome! Add your first product to get started.', 'success');
+            } else {
+                showNotification(`Loaded ${products.length} products from your database.`, 'success');
+            }
+        }
+        
+        // Handle category selection
+        productCategorySelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                customCategoryInput.style.display = 'block';
+                customCategoryInput.focus();
+            } else {
+                customCategoryInput.style.display = 'none';
+                customCategoryInput.value = '';
+            }
+        });
+        
+        // Add or update a product
+        addProductBtn.addEventListener('click', addOrUpdateProduct);
+        
+        // Also allow Enter key in product name field
+        productNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addOrUpdateProduct();
+            }
+        });
+        
+        // Add or update product function
+        function addOrUpdateProduct() {
+            const name = productNameInput.value.trim();
+            let category = productCategorySelect.value;
+            const price = parseFloat(productPriceInput.value);
+            const unit = productUnitSelect.value;
+            
+            // Validate inputs
+            if (!name) {
+                showNotification('Please enter a product name', 'error');
+                productNameInput.focus();
+                return;
+            }
+            
+            if (isNaN(price) || price <= 0) {
+                showNotification('Please enter a valid price (greater than 0)', 'error');
+                productPriceInput.focus();
+                return;
+            }
+            
+            // Handle custom category
+            if (category === 'Other' && customCategoryInput.value.trim()) {
+                category = customCategoryInput.value.trim();
+            }
+            
+            // Check if product already exists
+            const existingIndex = products.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+            
+            if (existingIndex >= 0) {
+                // Update existing product
+                products[existingIndex] = {
+                    ...products[existingIndex],
+                    price: price,
+                    unit: unit,
+                    category: category || 'Uncategorized',
+                    updatedAt: new Date().toISOString()
+                };
+                
+                showNotification(`Updated "${name}" price to ₹${price}/${unit}`, 'success');
+            } else {
+                // Add new product
+                const newProduct = {
+                    id: Date.now().toString(),
+                    name: name,
+                    category: category || 'Uncategorized',
+                    price: price,
+                    unit: unit,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                products.push(newProduct);
+                showNotification(`Added "${name}" to your products`, 'success');
+            }
+            
+            // Save to localStorage
+            saveProducts();
+            
+            // Update UI
+            updateProductsList();
+            updateStats();
+            
+            // Clear form
+            productNameInput.value = '';
+            productPriceInput.value = '';
+            productCategorySelect.value = '';
+            customCategoryInput.style.display = 'none';
+            customCategoryInput.value = '';
+            productUnitSelect.value = 'kg';
+            
+            // Focus back on name input
+            productNameInput.focus();
+        }
+        
+        // Update products list display
+        function updateProductsList(filter = '') {
+            // Clear current list
+            productsList.innerHTML = '';
+            
+            // Filter products if search term exists
+            let filteredProducts = products;
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredProducts = products.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) || 
+                    p.category.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Check if there are any products
+            if (filteredProducts.length === 0) {
+                let message = 'No products found.';
+                if (filter) {
+                    message = `No products matching "${filter}". Try a different search.`;
+                } else {
+                    message = 'No products added yet. Start by adding your first product above!';
+                }
+                
+                productsList.innerHTML = `
+                    <div class="empty-message">
+                        <i class="fas fa-search fa-2x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by name
+            filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Create product items
+            filteredProducts.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item';
+                productItem.innerHTML = `
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">₹${product.price.toFixed(2)} / ${product.unit}</div>
+                        <small style="color: #666;">Category: ${product.category}</small>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-small btn-secondary edit-btn" data-id="${product.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-small btn-danger delete-btn" data-id="${product.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                productsList.appendChild(productItem);
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    deleteProduct(productId);
+                });
+            });
+            
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    editProduct(productId);
+                });
+            });
+            
+            // Update calculator dropdown
+            updateCalculatorProductList();
+        }
+        
+        // Update calculator product dropdown
+        function updateCalculatorProductList() {
+            // Clear current options
+            calcProductSelect.innerHTML = '<option value="">-- Select a product --</option>';
+            
+            // Sort products by name
+            const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Add products to dropdown
+            sortedProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} (₹${product.price.toFixed(2)}/${product.unit})`;
+                calcProductSelect.appendChild(option);
+            });
+        }
+        
+        // Delete a product
+        function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+                products = products.filter(p => p.id !== productId);
+                saveProducts();
+                updateProductsList();
+                updateStats();
+                showNotification(`Deleted "${product.name}"`, 'success');
+            }
+        }
+        
+        // Edit a product
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Populate form with product data
+            productNameInput.value = product.name;
+            productPriceInput.value = product.price;
+            productUnitSelect.value = product.unit;
+            
+            // Handle category
+            const categoryOptions = Array.from(productCategorySelect.options).map(opt => opt.value);
+            if (categoryOptions.includes(product.category)) {
+                productCategorySelect.value = product.category;
+                customCategoryInput.style.display = 'none';
+            } else {
+                productCategorySelect.value = 'Other';
+                customCategoryInput.style.display = 'block';
+                customCategoryInput.value = product.category;
+            }
+            
+            // Scroll to form
+            productNameInput.focus();
+            showNotification(`Editing "${product.name}". Update values and click Add/Update to save.`, 'success');
+        }
+        
+        // Calculate cost
+        calculateBtn.addEventListener('click', calculateCost);
+        
+        // Allow Enter key in weight input
+        weightInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateCost();
+            }
+        });
+        
+        function calculateCost() {
+            const productId = calcProductSelect.value;
+            const weight = parseFloat(weightInput.value);
+            const weightUnit = weightUnitSelect.value;
+            
+            // Validate inputs
+            if (!productId) {
+                showNotification('Please select a product', 'error');
+                return;
+            }
+            
+            if (isNaN(weight) || weight <= 0) {
+                showNotification('Please enter a valid weight/quantity', 'error');
+                weightInput.focus();
+                return;
+            }
+            
+            // Get product
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            // Convert weight to the product's unit
+            let weightInProductUnit = weight;
+            
+            // If weight unit is different from product unit, convert
+            if (product.unit === 'kg' && weightUnit === 'g') {
+                weightInProductUnit = weight / 1000;
+            } else if (product.unit === '100g' && weightUnit === 'g') {
+                weightInProductUnit = weight / 100;
+            } else if (product.unit === '500g' && weightUnit === 'g') {
+                weightInProductUnit = weight / 500;
+            } else if (product.unit === 'liter' && weightUnit === 'ml') {
+                weightInProductUnit = weight / 1000;
+            }
+            // For piece-based products
+            else if (product.unit === 'piece' && weightUnit === 'piece') {
+                weightInProductUnit = weight;
+            }
+            // If units are incompatible
+            else if ((product.unit.includes('g') && !weightUnit.includes('g')) || 
+                     (product.unit.includes('liter') && !weightUnit.includes('liter') && !weightUnit.includes('ml')) ||
+                     (product.unit === 'piece' && weightUnit !== 'piece')) {
+                showNotification(`Cannot convert ${weightUnit} to ${product.unit}. Please check units.`, 'error');
+                return;
+            }
+            
+            // Calculate total cost
+            const totalCost = product.price * weightInProductUnit;
+            
+            // Display result
+            totalAmount.textContent = `₹${totalCost.toFixed(2)}`;
+            
+            let details = `${weight}${weightUnit} of ${product.name}`;
+            details += ` at ₹${product.price.toFixed(2)}/${product.unit}`;
+            details += ` = ₹${totalCost.toFixed(2)}`;
+            
+            if (weightUnit !== product.unit && !(product.unit === 'piece' && weightUnit === 'piece')) {
+                details += ` (${weight}${weightUnit} = ${weightInProductUnit}${product.unit})`;
+            }
+            
+            calculationDetails.textContent = details;
+            
+            // Show result with animation
+            result.classList.remove('active');
+            setTimeout(() => {
+                result.classList.add('active');
+            }, 10);
+        }
+        
+        // Update statistics
+        function updateStats() {
+            totalProductsElement.textContent = products.length;
+            
+            // Count unique categories
+            const categories = [...new Set(products.map(p => p.category))];
+            totalCategoriesElement.textContent = categories.length;
+            
+            // Calculate average price
+            if (products.length > 0) {
+                const avgPrice = products.reduce((sum, p) => sum + p.price, 0) / products.length;
+                avgPriceElement.textContent = avgPrice.toFixed(2);
+            } else {
+                avgPriceElement.textContent = '0';
+            }
+        }
+        
+        // Search products
+        searchProductInput.addEventListener('input', function() {
+            updateProductsList(this.value);
+        });
+        
+        // Reset all products
+        resetAllBtn.addEventListener('click', function() {
+            if (products.length === 0) {
+                showNotification('No products to reset', 'error');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete all ${products.length} products? This cannot be undone.`)) {
+                products = [];
+                saveProducts();
+                updateProductsList();
+                updateStats();
+                showNotification('All products have been deleted', 'success');
+            }
+        });
+        
+        // Load sample data
+        sampleDataBtn.addEventListener('click', function() {
+            if (products.length > 0 && !confirm('This will replace your current products. Continue?')) {
+                return;
+            }
+            
+            const sampleProducts = [
+                { id: '1', name: 'Tomato', category: 'Vegetables', price: 40, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '2', name: 'Potato', category: 'Vegetables', price: 30, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '3', name: 'Onion', category: 'Vegetables', price: 35, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '4', name: 'Apple', category: 'Fruits', price: 120, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '5', name: 'Banana', category: 'Fruits', price: 60, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '6', name: 'Rice', category: 'Grains', price: 80, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '7', name: 'Milk', category: 'Dairy', price: 60, unit: 'liter', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '8', name: 'Eggs', category: 'Dairy', price: 7, unit: 'piece', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '9', name: 'Bread', category: 'Other', price: 40, unit: 'piece', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                { id: '10', name: 'Sugar', category: 'Other', price: 45, unit: 'kg', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+            ];
+            
+            products = sampleProducts;
+            saveProducts();
+            updateProductsList();
+            updateStats();
+            showNotification('Sample products loaded. You can edit or add more.', 'success');
+        });
+        
+        // Export data
+        exportDataBtn.addEventListener('click', function() {
+            if (products.length === 0) {
+                showNotification('No products to export', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(products, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `product-prices-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification(`Exported ${products.length} products`, 'success');
+        });
+        
+        // Import data
+        importDataBtn.addEventListener('click', function() {
+            importFileInput.click();
+        });
+        
+        importFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedProducts = JSON.parse(event.target.result);
+                    
+                    if (!Array.isArray(importedProducts)) {
+                        throw new Error('Invalid file format');
+                    }
+                    
+                    if (confirm(`Import ${importedProducts.length} products? This will replace your current products.`)) {
+                        products = importedProducts;
+                        saveProducts();
+                        updateProductsList();
+                        updateStats();
+                        showNotification(`Imported ${products.length} products successfully`, 'success');
+                    }
+                } catch (error) {
+                    showNotification('Error importing file. Please check the file format.', 'error');
+                }
+                
+                // Reset file input
+                importFileInput.value = '';
+            };
+            
+            reader.readAsText(file);
+        });
+        
+        // Save products to localStorage
+        function saveProducts() {
+            localStorage.setItem('productPriceCalculator', JSON.stringify(products));
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(n => n.remove());
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideInRight 0.3s ease reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
